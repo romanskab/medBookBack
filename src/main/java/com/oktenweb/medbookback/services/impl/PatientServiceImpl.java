@@ -22,7 +22,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public List<Patient> findAll() {
-        return null;
+        return patientDAO.findAll();
     }
 
     @Override

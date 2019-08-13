@@ -14,8 +14,8 @@ import java.util.List;
 @RestController
 public class PatientController {
 
-    @Autowired
-    private PatientDAO patientDAO;
+//    @Autowired
+//    private PatientDAO patientDAO;
 
     @Autowired
     private PatientService patientService;
@@ -33,6 +33,6 @@ public class PatientController {
 
     @GetMapping("/patients")
     public List<Patient> patients() {
-        return patientDAO.findAll();
+        return patientService.findAll();
     }
 }

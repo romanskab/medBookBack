@@ -18,10 +18,12 @@ public class Security extends WebSecurityConfigurerAdapter {
     @Qualifier("patientServiceImpl")
     @Autowired
     private PatientServiceImpl patientService ;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
        auth.userDetailsService(patientService).passwordEncoder(passwordEncoder());
     }
+
     @Bean
         public PasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();

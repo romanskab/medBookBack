@@ -41,8 +41,7 @@ public class RequestProcessingJWTFilter extends GenericFilterBean {
             authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
         }
         // and set it to global security context
-        SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }
 }
