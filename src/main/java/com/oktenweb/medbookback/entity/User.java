@@ -9,23 +9,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Entity
-@DiscriminatorValue("PATIENT")
-public class Patient extends User {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "USER")
+public class User implements UserDetails {
 
-    private String surname;
-    private String fatherName;
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-    private String image;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String name;
+    @Column(unique = true)
+    private String username;
+    private String password;
+    private String phone;
+    private String dateOfBirth;
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -38,23 +42,21 @@ public class Patient extends User {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
-
-
 }

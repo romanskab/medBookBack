@@ -5,23 +5,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@DiscriminatorValue("PATIENT")
-public class Patient extends User {
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@DiscriminatorValue("DOCTOR")
+public class Doctor extends User{
     private String surname;
     private String fatherName;
+    private String speciality;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String image;
@@ -55,6 +56,4 @@ public class Patient extends User {
     public boolean isEnabled() {
         return true;
     }
-
-
 }

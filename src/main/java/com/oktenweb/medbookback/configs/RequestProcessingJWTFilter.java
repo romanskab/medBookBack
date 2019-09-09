@@ -4,6 +4,8 @@ package com.oktenweb.medbookback.configs;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -13,23 +15,27 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 
 public class RequestProcessingJWTFilter extends GenericFilterBean {
 
-    // react on every url (but we can change it if implement another filter)
+    // цей фільтр реагує на всі url
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    // оголошуємо пустий об'єкт аутентифікації
         Authentication authentication = null;
-//
 
+    //  підганяємо запит під клас HttpServletRequest
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        // and check presents of token in header Authorization
+
+        // дістаємо токен з header-а запиту
         String token = httpServletRequest.getHeader("Authorization");
-        // if present
+
+        // якщо токен існує, то розшифровуємо його, і створюємо об'єкт аутентифікації authentication
         if (token != null) {
-            // parse it and retrive body subject from
             String user = Jwts.parser()
                     .setSigningKey("yes".getBytes())
                     .parseClaimsJws(token.replace("Bearer", ""))
@@ -37,11 +43,17 @@ public class RequestProcessingJWTFilter extends GenericFilterBean {
                     .getSubject();
             System.out.println(user + "!!!!!!!!!!!---!!!!!");
 
-            //after parse of token we create Authentication object
-            authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+            String[] array = user.split(" ");
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(array[1]));
+
+            authentication = new UsernamePasswordAuthenticationToken(array[0], null, authorities);
         }
-        // and set it to global security context
+
+        // запихаємо об'єкт аутентифікації в контекст security
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // передаємо ланцюг дій далі
         chain.doFilter(request, response);
     }
 }

@@ -1,7 +1,7 @@
 package com.oktenweb.medbookback.entity;
 
-public enum Role {
+public enum Role{
     ROLE_PATIENT,
     ROLE_DOCTOR,
-    ROLE_LABORATORY
+    ROLE_LABORATORY;
 }
