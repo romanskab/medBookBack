@@ -31,6 +31,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public Patient findByUsername(String username) {
+        return patientDAO.findByUsername(username);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return patientDAO.findByUsername(username);
     }

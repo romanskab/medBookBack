@@ -25,8 +25,7 @@ public class Laboratory extends User {
     private String district;
     private String city;
     private String street;
-    private String build;
-
+    private String building;
     @Enumerated(EnumType.STRING)
     private Role role;
 

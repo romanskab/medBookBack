@@ -25,10 +25,10 @@ public class RequestProcessingJWTFilter extends GenericFilterBean {
     // цей фільтр реагує на всі url
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    // оголошуємо пустий об'єкт аутентифікації
+        // оголошуємо пустий об'єкт аутентифікації
         Authentication authentication = null;
 
-    //  підганяємо запит під клас HttpServletRequest
+        //  підганяємо запит під клас HttpServletRequest
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         // дістаємо токен з header-а запиту

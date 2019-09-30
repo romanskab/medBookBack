@@ -13,4 +13,6 @@ public interface PatientService extends UserDetailsService {
 
     Patient findOneById(Integer id);
 
+    Patient findByUsername(String username);
+
 }

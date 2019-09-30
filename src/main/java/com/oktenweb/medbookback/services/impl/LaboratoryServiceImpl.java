@@ -29,6 +29,11 @@ public class LaboratoryServiceImpl implements LaboratoryService {
     }
 
     @Override
+    public Laboratory findByUsername(String username) {
+        return laboratoryDAO.findByUsername(username);
+    }
+
+    @Override
     public Laboratory findOneById(Integer id) {
         return null;
     }

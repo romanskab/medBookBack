@@ -12,5 +12,7 @@ public interface DoctorService extends UserDetailsService {
 
     List<Doctor> findAll();
 
+    Doctor findByUsername(String username);
+
     Doctor findOneById(Integer id);
 }

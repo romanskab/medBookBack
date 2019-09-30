@@ -23,10 +23,9 @@ public class Doctor extends User{
     private String surname;
     private String fatherName;
     private String speciality;
+    private String dateOfBirth;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private String image;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 

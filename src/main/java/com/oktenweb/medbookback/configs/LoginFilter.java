@@ -2,6 +2,7 @@ package com.oktenweb.medbookback.configs;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.oktenweb.medbookback.dao.PatientDAO;
 import com.oktenweb.medbookback.entity.Patient;
 import com.oktenweb.medbookback.entity.User;
@@ -10,6 +11,7 @@ import com.oktenweb.medbookback.services.UserService;
 import com.oktenweb.medbookback.services.impl.PatientServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -65,7 +67,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         //після успішного виконання попереднього методу, створюємо токен і додаємо його в header відповіді
         UserDetails userDetails = userDetailsService.loadUserByUsername(auth.getName());
         String jwt_user_token = userDetails.getUsername() + " ";
-        for (GrantedAuthority authority: userDetails.getAuthorities()){
+        for (GrantedAuthority authority : userDetails.getAuthorities()) {
             jwt_user_token += authority.getAuthority();
         }
         System.out.println(jwt_user_token);
@@ -77,9 +79,5 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
                 .compact();
         res.addHeader("Authorization", "Bearer " + jwtoken);
 
-        User currentUser = this.userDetailsService.findUserByUsername(userDetails.getUsername());
-        System.out.println(currentUser.getId());
-        System.out.println(currentUser.getRole().name());
-        res.addHeader("CurrentUser", currentUser.getId()+"-"+currentUser.getRole().name());
     }
 }

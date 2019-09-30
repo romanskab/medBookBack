@@ -5,11 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,10 +20,9 @@ public class Patient extends User {
 
     private String surname;
     private String fatherName;
+    private String dateOfBirth;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private String image;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -55,6 +52,7 @@ public class Patient extends User {
     public boolean isEnabled() {
         return true;
     }
+
 
 
 }

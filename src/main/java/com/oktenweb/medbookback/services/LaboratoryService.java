@@ -1,5 +1,4 @@
 package com.oktenweb.medbookback.services;
-
 import com.oktenweb.medbookback.entity.Laboratory;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -9,6 +8,8 @@ public interface LaboratoryService extends UserDetailsService {
     void save(Laboratory laboratory);
 
     List<Laboratory> findAll();
+
+    Laboratory findByUsername(String username);
 
     Laboratory findOneById(Integer id);
 }

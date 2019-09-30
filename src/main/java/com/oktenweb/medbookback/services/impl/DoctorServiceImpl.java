@@ -28,6 +28,11 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public Doctor findByUsername(String username) {
+        return doctorDAO.findByUsername(username);
+    }
+
+    @Override
     public Doctor findOneById(Integer id) {
         return null;
     }
