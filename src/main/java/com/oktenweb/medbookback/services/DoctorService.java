@@ -1,10 +1,8 @@
 package com.oktenweb.medbookback.services;
 
 import com.oktenweb.medbookback.entity.Doctor;
+import com.oktenweb.medbookback.entity.Speciality;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
-
-import javax.print.Doc;
 import java.util.List;
 
 public interface DoctorService extends UserDetailsService {
@@ -15,4 +13,6 @@ public interface DoctorService extends UserDetailsService {
     Doctor findByUsername(String username);
 
     Doctor findOneById(Integer id);
+
+    List<Doctor> findBySpeciality(Speciality speciality);
 }

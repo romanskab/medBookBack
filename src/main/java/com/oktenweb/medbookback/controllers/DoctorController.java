@@ -1,9 +1,6 @@
 package com.oktenweb.medbookback.controllers;
 
-import com.oktenweb.medbookback.entity.CustomResponse;
-import com.oktenweb.medbookback.entity.Doctor;
-import com.oktenweb.medbookback.entity.Patient;
-import com.oktenweb.medbookback.entity.VisitToDoctor;
+import com.oktenweb.medbookback.entity.*;
 import com.oktenweb.medbookback.services.DoctorService;
 import com.oktenweb.medbookback.services.PatientService;
 import com.oktenweb.medbookback.services.VisitToDoctorService;
@@ -28,6 +25,11 @@ public class DoctorController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/specialities")
+    public Speciality[] getSpecialities(){
+        return Speciality.values();
+    }
 
     @PostMapping("/save/doctor")
     public CustomResponse save(@RequestBody Doctor doctor) {
@@ -58,18 +60,29 @@ public class DoctorController {
         return patient;
     }
 
-    @PostMapping("/doctor/saveVisitToDoctor")
-    public CustomResponse saveVisitToDoctor(@RequestBody VisitToDoctor visitToDoctor){
-        System.out.println(visitToDoctor);
+    @PostMapping("/doctor/saveVisitToDoctor/{doctorId}/{patientId}")
+    public CustomResponse saveVisitToDoctor(@RequestBody VisitToDoctor visitToDoctor,
+                                            @PathVariable int doctorId, @PathVariable int patientId){
+        Doctor doctor = doctorService.findOneById(doctorId);
+        Patient patient = patientService.findOneById(patientId);
+        visitToDoctor.setDoctor(doctor);
+        visitToDoctor.setPatient(patient);
         visitToDoctorService.save(visitToDoctor);
         return new CustomResponse("saveVisitToDoctor ok!", true);
     }
 
-    @GetMapping("/doctor/getVisitToDoctorByPatientId/{id}")
+    @GetMapping("/doctor/getVisitsToDoctorByPatientId/{id}")
     public List<VisitToDoctor> getVisitToDoctorByPatientId(@PathVariable int id){
-        System.out.println("--------------------------");
-        System.out.println(visitToDoctorService.findByPatientId(id));
-        System.out.println("--------------------------");
-        return visitToDoctorService.findByPatientId(id);
+        Patient patient = patientService.findOneById(id);
+        return visitToDoctorService.findByPatient(patient);
     }
+
+    @PostMapping("/doctor/createCalendar/{doctorId}")
+    public CustomResponse createCalendar(@RequestBody CalendarOfVisits calendarOfVisits,
+                                            @PathVariable int doctorId){
+        Doctor doctor = doctorService.findOneById(doctorId);
+        calendarOfVisits.setDoctor(doctor);
+        return new CustomResponse("createCalendar ok!", true);
+    }
+
 }

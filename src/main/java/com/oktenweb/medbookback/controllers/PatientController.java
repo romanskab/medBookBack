@@ -1,16 +1,16 @@
 package com.oktenweb.medbookback.controllers;
 
-import com.oktenweb.medbookback.dao.PatientDAO;
 import com.oktenweb.medbookback.entity.CustomResponse;
+import com.oktenweb.medbookback.entity.Doctor;
 import com.oktenweb.medbookback.entity.Patient;
+import com.oktenweb.medbookback.entity.Speciality;
+import com.oktenweb.medbookback.services.DoctorService;
 import com.oktenweb.medbookback.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,6 +20,9 @@ public class PatientController {
 
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private DoctorService doctorService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,5 +51,12 @@ public class PatientController {
         Patient patient = patientService.findByUsername(username);
         patient.setPassword(null);
         return patient;
+    }
+
+    @GetMapping("/patient/doctors/spec/{speciality}")
+    public List<Doctor> getDoctorsBySpeciality(@PathVariable String speciality){
+        System.out.println("GM spec...");
+        Speciality speciality1 = Speciality.valueOf(speciality);
+        return doctorService.findBySpeciality(speciality1);
     }
 }

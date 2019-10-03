@@ -1,7 +1,7 @@
 package com.oktenweb.medbookback.services;
 
+import com.oktenweb.medbookback.entity.Patient;
 import com.oktenweb.medbookback.entity.VisitToDoctor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,5 +12,5 @@ public interface VisitToDoctorService{
 
     List<VisitToDoctor> findAll();
 
-    List<VisitToDoctor> findByPatientId(int patientId);
+    List<VisitToDoctor> findByPatient(Patient patient);
 }

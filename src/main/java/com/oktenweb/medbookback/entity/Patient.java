@@ -1,5 +1,6 @@
 package com.oktenweb.medbookback.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,20 @@ public class Patient extends User {
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
+    @JsonIgnore
+    private List<VisitToDoctor> visits = new ArrayList<VisitToDoctor>();
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "surname='" + surname + '\'' +
+                ", fatherName='" + fatherName + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", gender=" + gender +
+                ", role=" + role +
+                '}';
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -2,6 +2,7 @@ package com.oktenweb.medbookback.services.impl;
 
 import com.oktenweb.medbookback.dao.DoctorDAO;
 import com.oktenweb.medbookback.entity.Doctor;
+import com.oktenweb.medbookback.entity.Speciality;
 import com.oktenweb.medbookback.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,7 +35,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor findOneById(Integer id) {
-        return null;
+        return doctorDAO.findById(id).get();
+    }
+
+    @Override
+    public List<Doctor> findBySpeciality(Speciality speciality) {
+        return doctorDAO.findBySpeciality(speciality);
     }
 
     @Override

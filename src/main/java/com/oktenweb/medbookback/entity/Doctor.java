@@ -1,15 +1,13 @@
 package com.oktenweb.medbookback.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,12 +20,28 @@ import java.util.List;
 public class Doctor extends User{
     private String surname;
     private String fatherName;
-    private String speciality;
+    @Enumerated(EnumType.STRING)
+    private Speciality speciality;
     private String dateOfBirth;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "doctor")
+    @JsonIgnore
+    private List<VisitToDoctor> visits = new ArrayList<VisitToDoctor>();
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "surname='" + surname + '\'' +
+                ", fatherName='" + fatherName + '\'' +
+                ", speciality='" + speciality + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", gender=" + gender +
+                ", role=" + role +
+                '}';
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

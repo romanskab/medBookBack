@@ -1,0 +1,7 @@
+package com.oktenweb.medbookback.dao;
+
+import com.oktenweb.medbookback.entity.CalendarOfVisits;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CalendarOfVisitsDAO extends JpaRepository<CalendarOfVisits, Integer> {
+}

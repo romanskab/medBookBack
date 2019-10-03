@@ -1,6 +1,7 @@
 package com.oktenweb.medbookback.services.impl;
 
 import com.oktenweb.medbookback.dao.VisitToDoctorDAO;
+import com.oktenweb.medbookback.entity.Patient;
 import com.oktenweb.medbookback.entity.VisitToDoctor;
 import com.oktenweb.medbookback.services.VisitToDoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ class VisitToDoctorServiceImpl implements VisitToDoctorService {
     }
 
     @Override
-    public List<VisitToDoctor> findByPatientId(int patientId) {
-        return visitToDoctorDAO.findByPatientId(patientId);
+    public List<VisitToDoctor> findByPatient(Patient patient) {
+        return visitToDoctorDAO.findByPatient(patient);
     }
 
 
