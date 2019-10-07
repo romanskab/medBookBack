@@ -1,5 +1,6 @@
 package com.oktenweb.medbookback.services;
 
+import com.oktenweb.medbookback.entity.Doctor;
 import com.oktenweb.medbookback.entity.Patient;
 import com.oktenweb.medbookback.entity.VisitToDoctor;
 import org.springframework.stereotype.Service;
@@ -13,4 +14,6 @@ public interface VisitToDoctorService{
     List<VisitToDoctor> findAll();
 
     List<VisitToDoctor> findByPatient(Patient patient);
+
+    List<VisitToDoctor> findByDoctor (Doctor doctor);
 }

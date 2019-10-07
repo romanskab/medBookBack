@@ -1,6 +1,7 @@
 package com.oktenweb.medbookback.controllers;
 
 import com.oktenweb.medbookback.entity.*;
+import com.oktenweb.medbookback.services.CalendarOfVisitsService;
 import com.oktenweb.medbookback.services.DoctorService;
 import com.oktenweb.medbookback.services.PatientService;
 import com.oktenweb.medbookback.services.VisitToDoctorService;
@@ -9,11 +10,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class DoctorController {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private DoctorService doctorService;
 
@@ -24,7 +30,7 @@ public class DoctorController {
     private VisitToDoctorService visitToDoctorService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private CalendarOfVisitsService calendarOfVisitsService;
 
     @GetMapping("/specialities")
     public Speciality[] getSpecialities(){
@@ -33,7 +39,6 @@ public class DoctorController {
 
     @PostMapping("/save/doctor")
     public CustomResponse save(@RequestBody Doctor doctor) {
-        System.out.println(doctor);
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
         doctorService.save(doctor);
         return new CustomResponse("save/doctor ok!", true);
@@ -77,12 +82,37 @@ public class DoctorController {
         return visitToDoctorService.findByPatient(patient);
     }
 
-    @PostMapping("/doctor/createCalendar/{doctorId}")
-    public CustomResponse createCalendar(@RequestBody CalendarOfVisits calendarOfVisits,
-                                            @PathVariable int doctorId){
+    @PostMapping("/doctor/addWorkTimes/{doctorId}/{date}")
+    public CustomResponse createCalendar(@RequestBody String[] times,
+                                            @PathVariable int doctorId, @PathVariable String date){
         Doctor doctor = doctorService.findOneById(doctorId);
-        calendarOfVisits.setDoctor(doctor);
+        String[] split = date.split("-");
+        int year = new Integer(split[0]);
+        int month = new Integer(split[1]);
+        int day = new Integer(split[2]);
+        LocalDate localDate = LocalDate.of(year, month, day);
+        for (String time : times) {
+            CalendarOfVisits calendarOfVisits = new CalendarOfVisits();
+            calendarOfVisits.setDoctor(doctor);
+            calendarOfVisits.setDate(localDate);
+            calendarOfVisits.setTime(time);
+            calendarOfVisitsService.save(calendarOfVisits);
+        }
         return new CustomResponse("createCalendar ok!", true);
+    }
+
+    @GetMapping("/doctor/calendar/{doctorId}")
+    public List<CalendarOfVisits> getCalendar(@PathVariable int doctorId){
+        System.out.println(doctorId);
+        System.out.println(calendarOfVisitsService.findAllByDoctorId(doctorId));
+        return calendarOfVisitsService.findAllByDoctorId(doctorId);
+    }
+
+    @GetMapping("/doctor/visits/{doctorId}")
+    public List<VisitToDoctor> getAllVisitsByDoctor(@PathVariable int doctorId){
+        System.out.println(doctorId);
+        Doctor doctor = doctorService.findOneById(doctorId);
+        return visitToDoctorService.findByDoctor(doctor);
     }
 
 }

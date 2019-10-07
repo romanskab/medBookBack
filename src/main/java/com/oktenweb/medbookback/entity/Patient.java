@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +22,7 @@ public class Patient extends User {
 
     private String surname;
     private String fatherName;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @Enumerated(EnumType.STRING)
@@ -29,6 +30,9 @@ public class Patient extends User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
     @JsonIgnore
     private List<VisitToDoctor> visits = new ArrayList<VisitToDoctor>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
+    @JsonIgnore
+    private List<CalendarOfVisits> calendar = new ArrayList<CalendarOfVisits>();
 
     @Override
     public String toString() {

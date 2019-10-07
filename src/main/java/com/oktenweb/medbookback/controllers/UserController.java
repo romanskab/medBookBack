@@ -4,9 +4,14 @@ import com.oktenweb.medbookback.entity.CustomResponse;
 import com.oktenweb.medbookback.entity.User;
 import com.oktenweb.medbookback.services.FileService;
 import com.oktenweb.medbookback.services.UserService;
+import com.oktenweb.medbookback.utils.LocalDateCustomEditor;
+import lombok.AllArgsConstructor;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +26,17 @@ public class UserController {
 
     @Autowired
     private FileService fileService;
+
+//    @Autowired
+//    private LocalDateCustomEditor localDateCustomEditor;
+
+//    @InitBinder("patient")
+//    public void initBinder() {
+//        System.out.println("init!!!!!!!!");
+
+//        binder.registerCustomEditor(LocalDate.class, localDateCustomEditor);
+//        System.out.println("init!!!!!!!!");
+//    }
 
     @GetMapping("/user/currentRole")
     public String currentAuthorities() {

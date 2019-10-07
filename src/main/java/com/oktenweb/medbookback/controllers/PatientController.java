@@ -1,17 +1,17 @@
 package com.oktenweb.medbookback.controllers;
 
-import com.oktenweb.medbookback.entity.CustomResponse;
-import com.oktenweb.medbookback.entity.Doctor;
-import com.oktenweb.medbookback.entity.Patient;
-import com.oktenweb.medbookback.entity.Speciality;
+import com.oktenweb.medbookback.entity.*;
+import com.oktenweb.medbookback.services.CalendarOfVisitsService;
 import com.oktenweb.medbookback.services.DoctorService;
 import com.oktenweb.medbookback.services.PatientService;
+import com.oktenweb.medbookback.services.VisitToDoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -25,6 +25,12 @@ public class PatientController {
     private DoctorService doctorService;
 
     @Autowired
+    private CalendarOfVisitsService calendarOfVisitsService;
+
+    @Autowired
+    private VisitToDoctorService visitToDoctorService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/save/patient")
@@ -34,6 +40,11 @@ public class PatientController {
         patientService.save(patient);
         return new CustomResponse("save/patient ok!", true);
     }
+
+//    @InitBinder("**")
+//    public void initBinder(){
+//        System.out.println("init!!!!!!!!!!!");
+//    }
 
     @GetMapping("/patients")
     public List<Patient> patients() {
@@ -54,9 +65,31 @@ public class PatientController {
     }
 
     @GetMapping("/patient/doctors/spec/{speciality}")
-    public List<Doctor> getDoctorsBySpeciality(@PathVariable String speciality){
-        System.out.println("GM spec...");
+    public List<Doctor> getDoctorsBySpeciality(@PathVariable String speciality) {
         Speciality speciality1 = Speciality.valueOf(speciality);
         return doctorService.findBySpeciality(speciality1);
+    }
+
+    @GetMapping("/patient/freeTimeToDoctor/{doctorId}")
+    public List<CalendarOfVisits> getFreeTimeToDoctor(@PathVariable int doctorId) {
+        return calendarOfVisitsService.findAllByDoctorIdAndPatientIsNull(doctorId);
+    }
+
+    @PostMapping("/patient/saveRecordInCalendar/{calendarId}/{patientId}")
+    public CustomResponse saveRecordInCalendar(@PathVariable int calendarId, @PathVariable int patientId) {
+        CalendarOfVisits calendar = calendarOfVisitsService.findById(calendarId);
+        Patient patient = patientService.findOneById(patientId);
+        calendar.setPatient(patient);
+        calendarOfVisitsService.save(calendar);
+        return new CustomResponse("saveRecordInCalendar ok!", true);
+    }
+    
+    @GetMapping("/patient/visitsToDoctor/last/{patientId}")
+    public VisitToDoctor getLastVisitToDoctor(@PathVariable int patientId){
+        Patient patient = patientService.findOneById(patientId);
+        List<VisitToDoctor> visits = visitToDoctorService.findByPatient(patient);
+        VisitToDoctor visitToDoctor = visits.stream().max(Comparator.comparing(VisitToDoctor::getDate)).get();
+        System.out.println(visitToDoctor);
+        return visitToDoctor;
     }
 }

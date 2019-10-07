@@ -26,9 +26,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient findOneById(Integer id) {
+    public Patient findOneById(int id) {
         return patientDAO.findById(id).get();
     }
+
+//    @Override
+//    public Patient findOneById(Integer id) {
+//        return patientDAO.findById(id).get();
+//    }
 
     @Override
     public Patient findByUsername(String username) {

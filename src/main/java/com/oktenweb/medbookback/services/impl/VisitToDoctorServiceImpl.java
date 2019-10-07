@@ -1,6 +1,7 @@
 package com.oktenweb.medbookback.services.impl;
 
 import com.oktenweb.medbookback.dao.VisitToDoctorDAO;
+import com.oktenweb.medbookback.entity.Doctor;
 import com.oktenweb.medbookback.entity.Patient;
 import com.oktenweb.medbookback.entity.VisitToDoctor;
 import com.oktenweb.medbookback.services.VisitToDoctorService;
@@ -29,6 +30,11 @@ class VisitToDoctorServiceImpl implements VisitToDoctorService {
     @Override
     public List<VisitToDoctor> findByPatient(Patient patient) {
         return visitToDoctorDAO.findByPatient(patient);
+    }
+
+    @Override
+    public List<VisitToDoctor> findByDoctor(Doctor doctor) {
+        return visitToDoctorDAO.findByDoctor(doctor);
     }
 
 

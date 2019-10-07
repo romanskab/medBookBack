@@ -11,7 +11,7 @@ public interface PatientService extends UserDetailsService {
 
     List<Patient> findAll();
 
-    Patient findOneById(Integer id);
+    Patient findOneById(int id);
 
     Patient findByUsername(String username);
 

@@ -34,7 +34,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor findOneById(Integer id) {
+    public Doctor findOneById(int id) {
         return doctorDAO.findById(id).get();
     }
 

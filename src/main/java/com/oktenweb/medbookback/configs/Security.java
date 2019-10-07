@@ -44,6 +44,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/specialities").permitAll()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/save/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/patient/saveRecordInCalendar").permitAll()
                 .antMatchers(HttpMethod.GET, "/patient/**").hasRole("PATIENT")
                 .antMatchers(HttpMethod.GET, "/doctors/**").hasRole("DOCTOR")
                 .antMatchers(HttpMethod.GET, "/laboratories/**").hasRole("LABORATORY")

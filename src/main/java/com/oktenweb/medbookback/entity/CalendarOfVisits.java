@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,7 @@ public class CalendarOfVisits {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String date;
+    private LocalDate date;
     private String time;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Doctor doctor;
