@@ -2,10 +2,12 @@ package com.oktenweb.medbookback.services.impl;
 
 import com.oktenweb.medbookback.dao.CalendarOfVisitsDAO;
 import com.oktenweb.medbookback.entity.CalendarOfVisits;
+import com.oktenweb.medbookback.entity.Doctor;
 import com.oktenweb.medbookback.services.CalendarOfVisitsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -34,5 +36,10 @@ public class CalendarOfVisitsServiceImpl implements CalendarOfVisitsService {
     @Override
     public CalendarOfVisits findById(int id) {
         return calendarOfVisitsDAO.findById(id).get();
+    }
+
+    @Override
+    public List<CalendarOfVisits> findByDoctorAndDate(Doctor doctor, LocalDate localDate) {
+        return calendarOfVisitsDAO.findByDoctorAndDate(doctor, localDate);
     }
 }

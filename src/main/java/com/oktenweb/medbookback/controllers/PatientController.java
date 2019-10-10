@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,18 +33,29 @@ public class PatientController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+//    @Autowired
+//    private LocalDateCustomEditor localDateCustomEditor;
+//
+//    @InitBinder()
+//    public void initBinder(WebDataBinder binder){
+//        System.out.println(LocalDate.now());
+//        binder.registerCustomEditor(LocalDate.class, localDateCustomEditor);
+//        System.out.println(binder);
+//        System.out.println("init!!!!!!!!patient");
+//    }
+
     @PostMapping("/save/patient")
-    public CustomResponse save(@RequestBody Patient patient) throws IOException {
+    public CustomResponse save(@RequestBody Patient patient){
         System.out.println(patient);
         patient.setPassword(passwordEncoder.encode(patient.getPassword()));
+//        тимчасове рішення для дати
+        LocalDate plus1day = patient.getDateOfBirth().plusDays(1);
+        System.out.println(plus1day);
+        patient.setDateOfBirth(plus1day);
+
         patientService.save(patient);
         return new CustomResponse("save/patient ok!", true);
     }
-
-//    @InitBinder("**")
-//    public void initBinder(){
-//        System.out.println("init!!!!!!!!!!!");
-//    }
 
     @GetMapping("/patients")
     public List<Patient> patients() {
@@ -80,6 +91,9 @@ public class PatientController {
         CalendarOfVisits calendar = calendarOfVisitsService.findById(calendarId);
         Patient patient = patientService.findOneById(patientId);
         calendar.setPatient(patient);
+//        тимчасове рішення для дати
+        calendar.setDate(calendar.getDate().plusDays(1));
+
         calendarOfVisitsService.save(calendar);
         return new CustomResponse("saveRecordInCalendar ok!", true);
     }

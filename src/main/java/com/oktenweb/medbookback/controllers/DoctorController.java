@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,6 +31,15 @@ public class DoctorController {
     @Autowired
     private CalendarOfVisitsService calendarOfVisitsService;
 
+//    @Autowired
+//    private LocalDateCustomEditor localDateCustomEditor;
+//
+//    @InitBinder()
+//    public void initBinder(WebDataBinder binder){
+//        binder.registerCustomEditor(LocalDate.class, localDateCustomEditor);
+//        System.out.println("init!!!!!!!!doctor");
+//    }
+
     @GetMapping("/specialities")
     public Speciality[] getSpecialities(){
         return Speciality.values();
@@ -40,6 +48,11 @@ public class DoctorController {
     @PostMapping("/save/doctor")
     public CustomResponse save(@RequestBody Doctor doctor) {
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
+//        тимчасове рішення для дати
+        LocalDate plus1day = doctor.getDateOfBirth().plusDays(1);
+        System.out.println(plus1day);
+        doctor.setDateOfBirth(plus1day);
+
         doctorService.save(doctor);
         return new CustomResponse("save/doctor ok!", true);
     }
@@ -86,15 +99,19 @@ public class DoctorController {
     public CustomResponse createCalendar(@RequestBody String[] times,
                                             @PathVariable int doctorId, @PathVariable String date){
         Doctor doctor = doctorService.findOneById(doctorId);
+        System.out.println(date);
         String[] split = date.split("-");
         int year = new Integer(split[0]);
         int month = new Integer(split[1]);
         int day = new Integer(split[2]);
         LocalDate localDate = LocalDate.of(year, month, day);
+//        тимчасове рішення для дати
+        LocalDate date1 = localDate.plusDays(1);
+
         for (String time : times) {
             CalendarOfVisits calendarOfVisits = new CalendarOfVisits();
             calendarOfVisits.setDoctor(doctor);
-            calendarOfVisits.setDate(localDate);
+            calendarOfVisits.setDate(date1);
             calendarOfVisits.setTime(time);
             calendarOfVisitsService.save(calendarOfVisits);
         }
@@ -114,5 +131,19 @@ public class DoctorController {
         Doctor doctor = doctorService.findOneById(doctorId);
         return visitToDoctorService.findByDoctor(doctor);
     }
+
+    @GetMapping("/doctor/visitsToday/{doctorId}")
+    public List<Patient> getTodayVisits(@PathVariable int doctorId){
+        System.out.println(doctorId);
+        System.out.println("hear was date");
+        Doctor doctor = doctorService.findOneById(doctorId);
+        List<CalendarOfVisits> visits = calendarOfVisitsService.findByDoctorAndDate(doctor, null);
+        for (CalendarOfVisits visit : visits) {
+            System.out.println(visit);
+        }
+        return null;
+    }
+
+
 
 }
