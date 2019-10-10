@@ -14,4 +14,5 @@ public interface CalendarOfVisitsDAO extends JpaRepository<CalendarOfVisits, Int
 
     List<CalendarOfVisits> findByDoctorAndDate (Doctor doctor, LocalDate localDate);
 
+    List<CalendarOfVisits> findByDoctorAndDateAndPatientIsNotNull (Doctor doctor, LocalDate localDate);
 }

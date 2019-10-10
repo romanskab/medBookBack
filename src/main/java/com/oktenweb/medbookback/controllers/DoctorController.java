@@ -133,15 +133,17 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor/visitsToday/{doctorId}")
-    public List<Patient> getTodayVisits(@PathVariable int doctorId){
+    public List<CalendarOfVisits> getTodayVisits(@PathVariable int doctorId){
         System.out.println(doctorId);
-        System.out.println("hear was date");
+//
+        LocalDate today = LocalDate.now().plusDays(1);
+        System.out.println(today);
         Doctor doctor = doctorService.findOneById(doctorId);
-        List<CalendarOfVisits> visits = calendarOfVisitsService.findByDoctorAndDate(doctor, null);
+        List<CalendarOfVisits> visits = calendarOfVisitsService.findByDoctorAndDateAndPatientIsNotNull(doctor, today);
         for (CalendarOfVisits visit : visits) {
             System.out.println(visit);
         }
-        return null;
+        return visits;
     }
 
 

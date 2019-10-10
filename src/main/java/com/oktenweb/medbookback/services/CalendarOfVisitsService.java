@@ -18,4 +18,7 @@ public interface CalendarOfVisitsService {
     CalendarOfVisits findById(int id);
 
     List<CalendarOfVisits> findByDoctorAndDate(Doctor doctor, LocalDate localDate);
+
+    List<CalendarOfVisits> findByDoctorAndDateAndPatientIsNotNull (Doctor doctor, LocalDate localDate);
+
 }

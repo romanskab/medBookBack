@@ -42,4 +42,9 @@ public class CalendarOfVisitsServiceImpl implements CalendarOfVisitsService {
     public List<CalendarOfVisits> findByDoctorAndDate(Doctor doctor, LocalDate localDate) {
         return calendarOfVisitsDAO.findByDoctorAndDate(doctor, localDate);
     }
+
+    @Override
+    public List<CalendarOfVisits> findByDoctorAndDateAndPatientIsNotNull(Doctor doctor, LocalDate localDate) {
+        return calendarOfVisitsDAO.findByDoctorAndDateAndPatientIsNotNull(doctor, localDate);
+    }
 }
