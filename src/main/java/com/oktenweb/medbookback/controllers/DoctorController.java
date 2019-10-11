@@ -1,10 +1,9 @@
 package com.oktenweb.medbookback.controllers;
 
 import com.oktenweb.medbookback.entity.*;
-import com.oktenweb.medbookback.services.CalendarOfVisitsService;
 import com.oktenweb.medbookback.services.DoctorService;
 import com.oktenweb.medbookback.services.PatientService;
-import com.oktenweb.medbookback.services.VisitToDoctorService;
+import com.oktenweb.medbookback.services.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,10 +25,7 @@ public class DoctorController {
     private PatientService patientService;
 
     @Autowired
-    private VisitToDoctorService visitToDoctorService;
-
-    @Autowired
-    private CalendarOfVisitsService calendarOfVisitsService;
+    private VisitService visitService;
 
 //    @Autowired
 //    private LocalDateCustomEditor localDateCustomEditor;
@@ -70,7 +66,7 @@ public class DoctorController {
         return doctorService.findAll();
     }
 
-    @PostMapping("/doctor/findPatientByUsername")
+    @PostMapping("/doctor/getPatientByUsername")
     public Patient findPatientById(@RequestBody String username){
         Patient patient = patientService.findByUsername(username);
         patient.setPassword(null);
@@ -78,21 +74,38 @@ public class DoctorController {
         return patient;
     }
 
-    @PostMapping("/doctor/saveVisitToDoctor/{doctorId}/{patientId}")
-    public CustomResponse saveVisitToDoctor(@RequestBody VisitToDoctor visitToDoctor,
-                                            @PathVariable int doctorId, @PathVariable int patientId){
-        Doctor doctor = doctorService.findOneById(doctorId);
-        Patient patient = patientService.findOneById(patientId);
-        visitToDoctor.setDoctor(doctor);
-        visitToDoctor.setPatient(patient);
-        visitToDoctorService.save(visitToDoctor);
-        return new CustomResponse("saveVisitToDoctor ok!", true);
+    @PostMapping("/doctor/saveResultOfVisit/{visitId}")
+    public CustomResponse saveResultOfVisit(@RequestBody String conclusion, @PathVariable int visitId){
+        Visit visit = visitService.findById(visitId);
+        visit.setConclusion(conclusion);
+//        тимчасове коригування дати
+        visit.setDate(visit.getDate().plusDays(1));
+
+        visitService.save(visit);
+        return new CustomResponse("saveResultOfVisit ok!", true);
     }
 
-    @GetMapping("/doctor/getVisitsToDoctorByPatientId/{id}")
-    public List<VisitToDoctor> getVisitToDoctorByPatientId(@PathVariable int id){
-        Patient patient = patientService.findOneById(id);
-        return visitToDoctorService.findByPatient(patient);
+    @GetMapping("/doctor/visitsByPatientId/{id}")
+    public List<Visit> getVisitsByPatientId(@PathVariable int id){
+        return visitService.findAllByPatientId(id);
+    }
+
+    @GetMapping("/doctor/visitsByDoctorId/{id}")
+    public List<Visit> getVisitsByDoctorId(@PathVariable int id){
+        System.out.println(id);
+        return visitService.findAllByDoctorId(id);
+    }
+
+    @GetMapping("/doctor/oldVisitsByPatientId/{id}")
+    public List<Visit> getOldVisitsByPatientId(@PathVariable int id){
+        System.out.println(id);
+        return visitService.findAllByPatientIdAndConclusionIsNotNull(id);
+    }
+
+    @GetMapping("/doctor/oldVisitsByDoctorId/{id}")
+    public List<Visit> getOldVisitsByDoctorId(@PathVariable int id){
+        System.out.println(id);
+        return visitService.findAllByDoctorIdAndConclusionIsNotNull(id);
     }
 
     @PostMapping("/doctor/addWorkTimes/{doctorId}/{date}")
@@ -109,38 +122,23 @@ public class DoctorController {
         LocalDate date1 = localDate.plusDays(1);
 
         for (String time : times) {
-            CalendarOfVisits calendarOfVisits = new CalendarOfVisits();
-            calendarOfVisits.setDoctor(doctor);
-            calendarOfVisits.setDate(date1);
-            calendarOfVisits.setTime(time);
-            calendarOfVisitsService.save(calendarOfVisits);
+            Visit visit = new Visit();
+            visit.setDoctor(doctor);
+            visit.setDate(date1);
+            visit.setTime(time);
+            visitService.save(visit);
         }
         return new CustomResponse("createCalendar ok!", true);
     }
 
-    @GetMapping("/doctor/calendar/{doctorId}")
-    public List<CalendarOfVisits> getCalendar(@PathVariable int doctorId){
+    @GetMapping("/doctor/futureTodayVisits/{doctorId}")
+    public List<Visit> getFutureTodayVisits(@PathVariable int doctorId){
         System.out.println(doctorId);
-        System.out.println(calendarOfVisitsService.findAllByDoctorId(doctorId));
-        return calendarOfVisitsService.findAllByDoctorId(doctorId);
-    }
-
-    @GetMapping("/doctor/visits/{doctorId}")
-    public List<VisitToDoctor> getAllVisitsByDoctor(@PathVariable int doctorId){
-        System.out.println(doctorId);
-        Doctor doctor = doctorService.findOneById(doctorId);
-        return visitToDoctorService.findByDoctor(doctor);
-    }
-
-    @GetMapping("/doctor/visitsToday/{doctorId}")
-    public List<CalendarOfVisits> getTodayVisits(@PathVariable int doctorId){
-        System.out.println(doctorId);
-//
+//      тимчасове рішення для дати
         LocalDate today = LocalDate.now().plusDays(1);
-        System.out.println(today);
-        Doctor doctor = doctorService.findOneById(doctorId);
-        List<CalendarOfVisits> visits = calendarOfVisitsService.findByDoctorAndDateAndPatientIsNotNull(doctor, today);
-        for (CalendarOfVisits visit : visits) {
+
+        List<Visit> visits = visitService.findAllByDoctorIdAndDateAndPatientIsNotNullAndConclusionIsNull(doctorId, today);
+        for (Visit visit : visits) {
             System.out.println(visit);
         }
         return visits;

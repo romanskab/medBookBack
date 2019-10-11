@@ -29,10 +29,7 @@ public class Patient extends User {
     private Role role;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
     @JsonIgnore
-    private List<VisitToDoctor> visits = new ArrayList<VisitToDoctor>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
-    @JsonIgnore
-    private List<CalendarOfVisits> calendar = new ArrayList<CalendarOfVisits>();
+    private List<Visit> visits = new ArrayList<Visit>();
 
     @Override
     public String toString() {
