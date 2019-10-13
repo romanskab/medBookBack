@@ -46,6 +46,11 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
+    public List<Visit> findAllByDoctorIdAndConclusionIsNullAndDateIsAfter(int id, LocalDate localDate) {
+        return visitDAO.findAllByDoctorIdAndConclusionIsNullAndDateIsAfter(id, localDate);
+    }
+
+    @Override
     public List<Visit> findAllByDoctorIdAndConclusionIsNotNull(int id) {
         return visitDAO.findAllByDoctorIdAndConclusionIsNotNull(id);
     }
@@ -53,6 +58,16 @@ public class VisitServiceImpl implements VisitService {
     @Override
     public List<Visit> findAllByPatientIdAndConclusionIsNotNull(int id) {
         return visitDAO.findAllByPatientIdAndConclusionIsNotNull(id);
+    }
+
+    @Override
+    public List<Visit> findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(int id, LocalDate localDate) {
+        return visitDAO.findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(id, localDate);
+    }
+
+    @Override
+    public List<Visit> findAllByDoctorIdAndPatientIsNullAndDateIsAfter(int id, LocalDate localDate) {
+        return visitDAO.findAllByDoctorIdAndPatientIsNullAndDateIsAfter(id, localDate);
     }
 
 

@@ -37,7 +37,7 @@ public class DoctorController {
 //    }
 
     @GetMapping("/specialities")
-    public Speciality[] getSpecialities(){
+    public Speciality[] getSpecialities() {
         return Speciality.values();
     }
 
@@ -67,7 +67,7 @@ public class DoctorController {
     }
 
     @PostMapping("/doctor/getPatientByUsername")
-    public Patient findPatientById(@RequestBody String username){
+    public Patient findPatientById(@RequestBody String username) {
         Patient patient = patientService.findByUsername(username);
         patient.setPassword(null);
         System.out.println(patient);
@@ -75,7 +75,7 @@ public class DoctorController {
     }
 
     @PostMapping("/doctor/saveResultOfVisit/{visitId}")
-    public CustomResponse saveResultOfVisit(@RequestBody String conclusion, @PathVariable int visitId){
+    public CustomResponse saveResultOfVisit(@RequestBody String conclusion, @PathVariable int visitId) {
         Visit visit = visitService.findById(visitId);
         visit.setConclusion(conclusion);
 //        тимчасове коригування дати
@@ -86,31 +86,41 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor/visitsByPatientId/{id}")
-    public List<Visit> getVisitsByPatientId(@PathVariable int id){
+    public List<Visit> getVisitsByPatientId(@PathVariable int id) {
         return visitService.findAllByPatientId(id);
     }
 
     @GetMapping("/doctor/visitsByDoctorId/{id}")
-    public List<Visit> getVisitsByDoctorId(@PathVariable int id){
+    public List<Visit> getVisitsByDoctorId(@PathVariable int id) {
         System.out.println(id);
         return visitService.findAllByDoctorId(id);
     }
 
-    @GetMapping("/doctor/oldVisitsByPatientId/{id}")
-    public List<Visit> getOldVisitsByPatientId(@PathVariable int id){
+    @GetMapping("/doctor/finishedVisitsByPatientId/{id}")
+    public List<Visit> getAllFinishedVisitsByPatientId(@PathVariable int id) {
         System.out.println(id);
         return visitService.findAllByPatientIdAndConclusionIsNotNull(id);
     }
 
-    @GetMapping("/doctor/oldVisitsByDoctorId/{id}")
-    public List<Visit> getOldVisitsByDoctorId(@PathVariable int id){
+    @GetMapping("/doctor/finishedVisitsByDoctorId/{id}")
+    public List<Visit> getAllFinishedVisitsByDoctorId(@PathVariable int id) {
         System.out.println(id);
         return visitService.findAllByDoctorIdAndConclusionIsNotNull(id);
     }
 
+    @GetMapping("/doctor/lastVisit/{doctorId}")
+    public Visit getLastVisitForDoctor(@PathVariable int doctorId){
+        System.out.println(doctorId);
+        List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNotNull(doctorId);
+//        тимчасово до вирішення питань по даті
+        Visit lastVisit = visits.get(visits.size() - 1);
+        System.out.println(lastVisit);
+        return lastVisit;
+    }
+
     @PostMapping("/doctor/addWorkTimes/{doctorId}/{date}")
     public CustomResponse createCalendar(@RequestBody String[] times,
-                                            @PathVariable int doctorId, @PathVariable String date){
+                                         @PathVariable int doctorId, @PathVariable String date) {
         Doctor doctor = doctorService.findOneById(doctorId);
         System.out.println(date);
         String[] split = date.split("-");
@@ -132,7 +142,7 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor/futureTodayVisits/{doctorId}")
-    public List<Visit> getFutureTodayVisits(@PathVariable int doctorId){
+    public List<Visit> getFutureTodayVisits(@PathVariable int doctorId) {
         System.out.println(doctorId);
 //      тимчасове рішення для дати
         LocalDate today = LocalDate.now().plusDays(1);
@@ -144,6 +154,31 @@ public class DoctorController {
         return visits;
     }
 
+    @GetMapping("/doctor/futureVisits/{doctorId}")
+    public List<Visit> getFutureVisits(@PathVariable int doctorId) {
+        System.out.println(doctorId);
+//      тимчасове рішення для дати
+        LocalDate today = LocalDate.now().plusDays(0);
+
+        List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNullAndDateIsAfter(doctorId, today);
+        for (Visit visit : visits) {
+            System.out.println(visit);
+        }
+        return visits;
+    }
+
+    @GetMapping("/doctor/nextVisit/{doctorId}")
+    public Visit getNextVisit(@PathVariable int doctorId) {
+        System.out.println(doctorId);
+//      тимчасове рішення для дати
+        LocalDate today = LocalDate.now().plusDays(0);
+
+        List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(doctorId, today);
+//        тимчасово до вирішення питань з датою
+        Visit nextVisit = visits.get(0);
+        System.out.println(nextVisit);
+        return nextVisit;
+    }
 
 
 }

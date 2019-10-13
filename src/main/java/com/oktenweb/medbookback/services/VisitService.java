@@ -22,7 +22,14 @@ public interface VisitService {
 
     List<Visit> findAllByDoctorIdAndDateAndPatientIsNotNullAndConclusionIsNull (int id, LocalDate localDate);
 
+    List<Visit> findAllByDoctorIdAndConclusionIsNullAndDateIsAfter (int id, LocalDate localDate);
+
     List<Visit> findAllByDoctorIdAndConclusionIsNotNull(int id);
 
     List<Visit> findAllByPatientIdAndConclusionIsNotNull(int id);
+
+    List<Visit> findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter (int id, LocalDate localDate);
+
+    List<Visit> findAllByDoctorIdAndPatientIsNullAndDateIsAfter (int id, LocalDate localDate);
+
 }

@@ -79,7 +79,12 @@ public class PatientController {
 
     @GetMapping("/patient/freeVisitToDoctor/{doctorId}")
     public List<Visit> getFreeVisitToDoctor(@PathVariable int doctorId) {
-        return visitService.findAllByDoctorIdAndPatientIsNull(doctorId);
+        System.out.println(doctorId);
+//      тимчасове рішення для дати
+        LocalDate day = LocalDate.now().plusDays(0);
+
+        List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNullAndDateIsAfter(doctorId, day);
+        return visits;
     }
 
     @PostMapping("/patient/recordToDoctor/{visitId}/{patientId}")
@@ -101,6 +106,16 @@ public class PatientController {
         System.out.println(visits);
         System.out.println(lastVisit);
         System.out.println(patientId);
-        return null;
+        return lastVisit;
+    }
+
+    @GetMapping("/patient/visits/finished/{patientId}")
+    public List<Visit> getAllFinishedVisitsByPatientId(@PathVariable int patientId){
+        System.out.println(patientId);
+        List<Visit> visits = visitService.findAllByPatientIdAndConclusionIsNotNull(patientId);
+        for (Visit visit : visits) {
+            System.out.println(visit);
+        }
+        return visits;
     }
 }

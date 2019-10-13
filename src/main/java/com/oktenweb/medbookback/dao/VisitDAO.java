@@ -21,5 +21,8 @@ public interface VisitDAO extends JpaRepository<Visit, Integer> {
     List<Visit> findAllByDoctorIdAndPatientIsNull(int id);
 
     List<Visit> findAllByDoctorIdAndDateAndPatientIsNotNullAndConclusionIsNull (int id, LocalDate localDate);
+    List<Visit> findAllByDoctorIdAndConclusionIsNullAndDateIsAfter (int id, LocalDate localDate);
 
+    List<Visit> findAllByDoctorIdAndPatientIsNullAndDateIsAfter (int id, LocalDate localDate);
+    List<Visit> findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter (int id, LocalDate localDate);
 }
