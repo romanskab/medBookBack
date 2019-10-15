@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findOneById(Integer id) {
-        return null;
+    public User findById(int id) {
+        return userDAO.findById(id).get();
     }
 
     @Override

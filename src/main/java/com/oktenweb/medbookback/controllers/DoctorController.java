@@ -1,9 +1,7 @@
 package com.oktenweb.medbookback.controllers;
 
 import com.oktenweb.medbookback.entity.*;
-import com.oktenweb.medbookback.services.DoctorService;
-import com.oktenweb.medbookback.services.PatientService;
-import com.oktenweb.medbookback.services.VisitService;
+import com.oktenweb.medbookback.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +17,9 @@ public class DoctorController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private DoctorService doctorService;
 
     @Autowired
@@ -26,6 +27,12 @@ public class DoctorController {
 
     @Autowired
     private VisitService visitService;
+
+    @Autowired
+    private TestService testService;
+
+    @Autowired
+    private TestResultService testResultService;
 
 //    @Autowired
 //    private LocalDateCustomEditor localDateCustomEditor;
@@ -180,5 +187,43 @@ public class DoctorController {
         return nextVisit;
     }
 
+
+//    --------------------------------------------
+//                     АНАЛІЗИ
+//    --------------------------------------------
+    @GetMapping("/doctor/tests/titles")
+    public List<Test> getTestsTitles(){
+        return testService.findAll();
+    }
+
+    @PostMapping("/doctor/test/save/{testId}/{patientId}/{meterId}")
+    public CustomResponse saveTest(@RequestBody Double result,
+                                   @PathVariable int testId,
+                                   @PathVariable int patientId,
+                                   @PathVariable int meterId
+                                   ){
+        Test test = testService.findById(testId);
+        Patient patient = patientService.findOneById(patientId);
+        User user = userService.findById(meterId);
+        TestResult testResult = new TestResult();
+        testResult.setTest(test);
+        testResult.setPatient(patient);
+        testResult.setMeter(user);
+        testResult.setResult(result);
+//        тимчасове рішення для дати
+        testResult.setDate(LocalDate.now().plusDays(1));
+
+        System.out.println(testResult);
+        testResultService.save(testResult);
+        return new CustomResponse("saveTest ok!", true);
+    }
+    
+    @GetMapping("/doctor/testResults/patient/{patientId}")
+    public List<TestResult> getTests(@PathVariable int patientId){
+        System.out.println(patientId);
+        List<TestResult> testResults = testResultService.findAllByPatientId(patientId);
+        System.out.println(testResults);
+        return testResults;
+    }
 
 }

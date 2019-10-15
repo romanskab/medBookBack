@@ -30,6 +30,9 @@ public class Patient extends User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
     @JsonIgnore
     private List<Visit> visits = new ArrayList<Visit>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
+    @JsonIgnore
+    private List<TestResult> results = new ArrayList<TestResult>();
 
     @Override
     public String toString() {

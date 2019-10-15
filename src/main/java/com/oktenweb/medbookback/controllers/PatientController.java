@@ -3,6 +3,7 @@ package com.oktenweb.medbookback.controllers;
 import com.oktenweb.medbookback.entity.*;
 import com.oktenweb.medbookback.services.DoctorService;
 import com.oktenweb.medbookback.services.PatientService;
+import com.oktenweb.medbookback.services.TestResultService;
 import com.oktenweb.medbookback.services.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,9 @@ public class PatientController {
 
     @Autowired
     private VisitService visitService;
+
+    @Autowired
+    private TestResultService testResultService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -117,5 +121,24 @@ public class PatientController {
             System.out.println(visit);
         }
         return visits;
+    }
+
+//    -------------------------------------------
+//                    АНАЛІЗИ
+//    -------------------------------------------
+    @GetMapping("/patient/testResult/last/{patientId}/{title}")
+    public TestResult getLastTestResult(@PathVariable String title, @PathVariable int patientId){
+        List<TestResult> results = testResultService.findAllByPatientIdAndTestTitle(patientId, title);
+        TestResult testResult = results.stream().max(Comparator.comparing(TestResult::getDate)).get();
+        System.out.println(testResult);
+        return testResult;
+    }
+
+    @GetMapping("/patient/testResults/{patientId}")
+    public List<TestResult> getAllTestResults(@PathVariable int patientId){
+        System.out.println(patientId);
+        List<TestResult> testResults = testResultService.findAllByPatientId(patientId);
+        System.out.println(testResults);
+        return testResults;
     }
 }
