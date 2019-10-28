@@ -50,6 +50,7 @@ public class DoctorController {
 
     @PostMapping("/save/doctor")
     public CustomResponse save(@RequestBody Doctor doctor) {
+        System.out.println(doctor);
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
 //        тимчасове рішення для дати
         LocalDate plus1day = doctor.getDateOfBirth().plusDays(1);
@@ -118,11 +119,17 @@ public class DoctorController {
     @GetMapping("/doctor/lastVisit/{doctorId}")
     public Visit getLastVisitForDoctor(@PathVariable int doctorId){
         System.out.println(doctorId);
-        List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNotNull(doctorId);
+        try {
+            List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNotNull(doctorId);
 //        тимчасово до вирішення питань по даті
-        Visit lastVisit = visits.get(visits.size() - 1);
-        System.out.println(lastVisit);
-        return lastVisit;
+            Visit lastVisit = visits.get(visits.size() - 1);
+            System.out.println(lastVisit);
+            return lastVisit;
+        } catch (IndexOutOfBoundsException e){
+            System.out.println(e.getCause());
+            return null;
+        }
+
     }
 
     @PostMapping("/doctor/addWorkTimes/{doctorId}/{date}")
@@ -180,11 +187,17 @@ public class DoctorController {
 //      тимчасове рішення для дати
         LocalDate today = LocalDate.now().plusDays(0);
 
-        List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(doctorId, today);
+        try {
+            List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(doctorId, today);
 //        тимчасово до вирішення питань з датою
-        Visit nextVisit = visits.get(0);
-        System.out.println(nextVisit);
-        return nextVisit;
+            Visit nextVisit = visits.get(0);
+            System.out.println(nextVisit);
+            return nextVisit;
+        }catch (IndexOutOfBoundsException e){
+            System.out.println(e.getCause());
+            return null;
+        }
+
     }
 
 

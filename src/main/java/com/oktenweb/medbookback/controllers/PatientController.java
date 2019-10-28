@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -72,6 +73,7 @@ public class PatientController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Patient patient = patientService.findByUsername(username);
         patient.setPassword(null);
+        System.out.println(patient);
         return patient;
     }
 
@@ -105,12 +107,18 @@ public class PatientController {
     
     @GetMapping("/patient/visit/last/{patientId}")
     public Visit getLastVisit(@PathVariable int patientId){
-        List<Visit> visits = visitService.findAllByPatientIdAndConclusionIsNotNull(patientId);
-        Visit lastVisit = visits.stream().max(Comparator.comparing(Visit::getDate)).get();
-        System.out.println(visits);
-        System.out.println(lastVisit);
-        System.out.println(patientId);
-        return lastVisit;
+        try {
+            List<Visit> visits = visitService.findAllByPatientIdAndConclusionIsNotNull(patientId);
+            Visit lastVisit = visits.stream().max(Comparator.comparing(Visit::getDate)).get();
+            System.out.println(visits);
+            System.out.println(lastVisit);
+            System.out.println(patientId);
+            return lastVisit;
+        } catch (NoSuchElementException e){
+            System.out.println(e.getCause());
+            return null;
+        }
+
     }
 
     @GetMapping("/patient/visits/finished/{patientId}")
@@ -128,17 +136,31 @@ public class PatientController {
 //    -------------------------------------------
     @GetMapping("/patient/testResult/last/{patientId}/{title}")
     public TestResult getLastTestResult(@PathVariable String title, @PathVariable int patientId){
-        List<TestResult> results = testResultService.findAllByPatientIdAndTestTitle(patientId, title);
-        TestResult testResult = results.stream().max(Comparator.comparing(TestResult::getDate)).get();
-        System.out.println(testResult);
-        return testResult;
+        try {
+            List<TestResult> results = testResultService.findAllByPatientIdAndTestTitle(patientId, title);
+            TestResult testResult = results.stream().max(Comparator.comparing(TestResult::getDate)).get();
+            System.out.println(testResult);
+            return testResult;
+        } catch (NoSuchElementException e){
+            System.out.println(e.getCause());
+            return null;
+        }
+
     }
 
     @GetMapping("/patient/testResults/{patientId}")
     public List<TestResult> getAllTestResults(@PathVariable int patientId){
-        System.out.println(patientId);
         List<TestResult> testResults = testResultService.findAllByPatientId(patientId);
         System.out.println(testResults);
+        return testResults;
+    }
+
+    @GetMapping("/patient/testResultsByTitle/{patientId}/{title}")
+    public List<TestResult> getAllTestsByTitleAndPatient(@PathVariable int patientId, @PathVariable String title){
+        List<TestResult> testResults = testResultService.findAllByPatientIdAndTestTitle(patientId, title);
+        for (TestResult testResult : testResults) {
+            System.out.println(testResult);
+        }
         return testResults;
     }
 }
