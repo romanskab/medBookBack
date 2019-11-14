@@ -24,6 +24,8 @@ public interface VisitService {
 
     List<Visit> findAllByDoctorIdAndConclusionIsNullAndDateIsAfter (int id, LocalDate localDate);
 
+    List<Visit> findAllByPatientIdAndConclusionIsNullAndDateIsAfter (int id, LocalDate localDate);
+
     List<Visit> findAllByDoctorIdAndConclusionIsNotNull(int id);
 
     List<Visit> findAllByPatientIdAndConclusionIsNotNull(int id);

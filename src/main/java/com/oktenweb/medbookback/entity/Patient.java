@@ -1,6 +1,7 @@
 package com.oktenweb.medbookback.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.oktenweb.medbookback.configs.LocalDateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Patient extends User {
 
     private String surname;
     private String fatherName;
+    @Convert(converter = LocalDateConverter.class)
     private LocalDate dateOfBirth;
     @Enumerated(EnumType.STRING)
     private Gender gender;

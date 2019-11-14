@@ -51,6 +51,11 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
+    public List<Visit> findAllByPatientIdAndConclusionIsNullAndDateIsAfter(int id, LocalDate localDate) {
+        return visitDAO.findAllByPatientIdAndConclusionIsNullAndDateIsAfter(id, localDate);
+    }
+
+    @Override
     public List<Visit> findAllByDoctorIdAndConclusionIsNotNull(int id) {
         return visitDAO.findAllByDoctorIdAndConclusionIsNotNull(id);
     }

@@ -52,11 +52,6 @@ public class DoctorController {
     public CustomResponse save(@RequestBody Doctor doctor) {
         System.out.println(doctor);
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
-//        тимчасове рішення для дати
-        LocalDate plus1day = doctor.getDateOfBirth().plusDays(1);
-        System.out.println(plus1day);
-        doctor.setDateOfBirth(plus1day);
-
         doctorService.save(doctor);
         return new CustomResponse("save/doctor ok!", true);
     }
@@ -86,9 +81,6 @@ public class DoctorController {
     public CustomResponse saveResultOfVisit(@RequestBody String conclusion, @PathVariable int visitId) {
         Visit visit = visitService.findById(visitId);
         visit.setConclusion(conclusion);
-//        тимчасове коригування дати
-        visit.setDate(visit.getDate().plusDays(1));
-
         visitService.save(visit);
         return new CustomResponse("saveResultOfVisit ok!", true);
     }
@@ -121,7 +113,7 @@ public class DoctorController {
         System.out.println(doctorId);
         try {
             List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNotNull(doctorId);
-//        тимчасово до вирішення питань по даті
+//        тимчасово до переходу на datetime
             Visit lastVisit = visits.get(visits.size() - 1);
             System.out.println(lastVisit);
             return lastVisit;
@@ -142,13 +134,10 @@ public class DoctorController {
         int month = new Integer(split[1]);
         int day = new Integer(split[2]);
         LocalDate localDate = LocalDate.of(year, month, day);
-//        тимчасове рішення для дати
-        LocalDate date1 = localDate.plusDays(1);
-
         for (String time : times) {
             Visit visit = new Visit();
             visit.setDoctor(doctor);
-            visit.setDate(date1);
+            visit.setDate(localDate);
             visit.setTime(time);
             visitService.save(visit);
         }
@@ -158,9 +147,7 @@ public class DoctorController {
     @GetMapping("/doctor/futureTodayVisits/{doctorId}")
     public List<Visit> getFutureTodayVisits(@PathVariable int doctorId) {
         System.out.println(doctorId);
-//      тимчасове рішення для дати
-        LocalDate today = LocalDate.now().plusDays(1);
-
+        LocalDate today = LocalDate.now();
         List<Visit> visits = visitService.findAllByDoctorIdAndDateAndPatientIsNotNullAndConclusionIsNull(doctorId, today);
         for (Visit visit : visits) {
             System.out.println(visit);
@@ -171,10 +158,8 @@ public class DoctorController {
     @GetMapping("/doctor/futureVisits/{doctorId}")
     public List<Visit> getFutureVisits(@PathVariable int doctorId) {
         System.out.println(doctorId);
-//      тимчасове рішення для дати
-        LocalDate today = LocalDate.now().plusDays(0);
-
-        List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNullAndDateIsAfter(doctorId, today);
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        List<Visit> visits = visitService.findAllByDoctorIdAndConclusionIsNullAndDateIsAfter(doctorId, yesterday);
         for (Visit visit : visits) {
             System.out.println(visit);
         }
@@ -184,12 +169,11 @@ public class DoctorController {
     @GetMapping("/doctor/nextVisit/{doctorId}")
     public Visit getNextVisit(@PathVariable int doctorId) {
         System.out.println(doctorId);
-//      тимчасове рішення для дати
-        LocalDate today = LocalDate.now().plusDays(0);
+        LocalDate yesterday = LocalDate.now().minusDays(1);
 
         try {
-            List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(doctorId, today);
-//        тимчасово до вирішення питань з датою
+            List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNotNullAndConclusionIsNullAndDateIsAfter(doctorId, yesterday);
+//        тимчасово до переходу на datetime
             Visit nextVisit = visits.get(0);
             System.out.println(nextVisit);
             return nextVisit;
@@ -223,9 +207,7 @@ public class DoctorController {
         testResult.setPatient(patient);
         testResult.setMeter(user);
         testResult.setResult(result);
-//        тимчасове рішення для дати
-        testResult.setDate(LocalDate.now().plusDays(1));
-
+        testResult.setDate(LocalDate.now());
         System.out.println(testResult);
         testResultService.save(testResult);
         return new CustomResponse("saveTest ok!", true);

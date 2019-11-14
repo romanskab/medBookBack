@@ -46,14 +46,9 @@ public class PatientController {
 //    }
 
     @PostMapping("/save/patient")
-    public CustomResponse save(@RequestBody Patient patient){
+    public CustomResponse save(@RequestBody Patient patient) {
         System.out.println(patient);
         patient.setPassword(passwordEncoder.encode(patient.getPassword()));
-//        тимчасове рішення для дати
-        LocalDate plus1day = patient.getDateOfBirth().plusDays(1);
-        System.out.println(plus1day);
-        patient.setDateOfBirth(plus1day);
-
         patientService.save(patient);
         return new CustomResponse("save/patient ok!", true);
     }
@@ -86,10 +81,9 @@ public class PatientController {
     @GetMapping("/patient/freeVisitToDoctor/{doctorId}")
     public List<Visit> getFreeVisitToDoctor(@PathVariable int doctorId) {
         System.out.println(doctorId);
-//      тимчасове рішення для дати
-        LocalDate day = LocalDate.now().plusDays(0);
+        LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNullAndDateIsAfter(doctorId, day);
+        List<Visit> visits = visitService.findAllByDoctorIdAndPatientIsNullAndDateIsAfter(doctorId, yesterday);
         return visits;
     }
 
@@ -98,15 +92,12 @@ public class PatientController {
         Visit visit = visitService.findById(visitId);
         Patient patient = patientService.findOneById(patientId);
         visit.setPatient(patient);
-//        тимчасове рішення для дати
-        visit.setDate(visit.getDate().plusDays(1));
-
         visitService.save(visit);
         return new CustomResponse("saveVisit ok!", true);
     }
-    
+
     @GetMapping("/patient/visit/last/{patientId}")
-    public Visit getLastVisit(@PathVariable int patientId){
+    public Visit getLastVisit(@PathVariable int patientId) {
         try {
             List<Visit> visits = visitService.findAllByPatientIdAndConclusionIsNotNull(patientId);
             Visit lastVisit = visits.stream().max(Comparator.comparing(Visit::getDate)).get();
@@ -114,15 +105,28 @@ public class PatientController {
             System.out.println(lastVisit);
             System.out.println(patientId);
             return lastVisit;
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println(e.getCause());
             return null;
         }
+    }
 
+    @GetMapping("/patient/visit/next/{patientId}")
+    public Visit getNextVisit(@PathVariable int patientId) {
+        try {
+            LocalDate yesterday = LocalDate.now().minusDays(1);
+            List<Visit> visits = visitService.findAllByPatientIdAndConclusionIsNullAndDateIsAfter(patientId, yesterday);
+            Visit nextVisit = visits.stream().min(Comparator.comparing(Visit::getDate)).get();
+            System.out.println(nextVisit);
+            return nextVisit;
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getCause());
+            return null;
+        }
     }
 
     @GetMapping("/patient/visits/finished/{patientId}")
-    public List<Visit> getAllFinishedVisitsByPatientId(@PathVariable int patientId){
+    public List<Visit> getAllFinishedVisitsByPatientId(@PathVariable int patientId) {
         System.out.println(patientId);
         List<Visit> visits = visitService.findAllByPatientIdAndConclusionIsNotNull(patientId);
         for (Visit visit : visits) {
@@ -131,17 +135,17 @@ public class PatientController {
         return visits;
     }
 
-//    -------------------------------------------
+    //    -------------------------------------------
 //                    АНАЛІЗИ
 //    -------------------------------------------
     @GetMapping("/patient/testResult/last/{patientId}/{title}")
-    public TestResult getLastTestResult(@PathVariable String title, @PathVariable int patientId){
+    public TestResult getLastTestResult(@PathVariable String title, @PathVariable int patientId) {
         try {
             List<TestResult> results = testResultService.findAllByPatientIdAndTestTitle(patientId, title);
             TestResult testResult = results.stream().max(Comparator.comparing(TestResult::getDate)).get();
             System.out.println(testResult);
             return testResult;
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println(e.getCause());
             return null;
         }
@@ -149,14 +153,14 @@ public class PatientController {
     }
 
     @GetMapping("/patient/testResults/{patientId}")
-    public List<TestResult> getAllTestResults(@PathVariable int patientId){
+    public List<TestResult> getAllTestResults(@PathVariable int patientId) {
         List<TestResult> testResults = testResultService.findAllByPatientId(patientId);
         System.out.println(testResults);
         return testResults;
     }
 
     @GetMapping("/patient/testResultsByTitle/{patientId}/{title}")
-    public List<TestResult> getAllTestsByTitleAndPatient(@PathVariable int patientId, @PathVariable String title){
+    public List<TestResult> getAllTestsByTitleAndPatient(@PathVariable int patientId, @PathVariable String title) {
         List<TestResult> testResults = testResultService.findAllByPatientIdAndTestTitle(patientId, title);
         for (TestResult testResult : testResults) {
             System.out.println(testResult);
