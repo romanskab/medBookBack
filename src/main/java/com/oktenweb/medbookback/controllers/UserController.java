@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -41,6 +42,7 @@ public class UserController {
         fileService.storeFile(file);
         return new CustomResponse("save/user/photo ok!", true);
     }
+
 
 //    @PostMapping("/save/user/photo")
 //    public CustomResponse photo(MultipartFile image) throws IOException {

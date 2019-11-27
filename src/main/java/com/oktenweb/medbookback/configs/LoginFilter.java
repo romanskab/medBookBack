@@ -2,17 +2,10 @@ package com.oktenweb.medbookback.configs;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.oktenweb.medbookback.dao.PatientDAO;
-import com.oktenweb.medbookback.entity.Patient;
 import com.oktenweb.medbookback.entity.User;
-import com.oktenweb.medbookback.services.PatientService;
 import com.oktenweb.medbookback.services.UserService;
-import com.oktenweb.medbookback.services.impl.PatientServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Enumeration;
 
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -44,6 +37,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
         //підганяємо наш запит під клас юзера
+        System.out.println("attemptAuthentication:");
         User user = new ObjectMapper()
                 .readValue(httpServletRequest.getInputStream(), User.class);
         System.out.println(user);
